@@ -1,0 +1,45 @@
+version: '2'
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    hostname: "elasticsearch"
+    container_name: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+      - "cluster.routing.allocation.disk.threshold_enabled:true"
+      - "cluster.routing.allocation.disk.watermark.low:93%"
+      - "cluster.routing.allocation.disk.watermark.high:95%"
+      - "xpack.security.enabled=true"
+      - "xpack.security.audit.enabled=true"
+      - "ELASTIC_PASSWORD=umasrinivas"
+    expose:
+      - 9200
+    ports:
+      - "9200:9200"
+    volumes:
+      - node-data1:/data
+    networks:
+      - elk  
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - "ELASTICSEARCH_URL=http://localhost:9200"
+      - "ELASTICSEARCH_USERNAME=elastic"
+      - "ELASTICSEARCH_PASSWORD=umasrinivas"
+    networks:
+      - elk  
+
+volumes:
+  node-data1:
+    driver: local
+
+networks:
+ elk:
+  driver: bridge
