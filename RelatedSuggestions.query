@@ -1,0 +1,39 @@
+GET /testindex/_search
+
+{
+	"query": {
+		"bool": {
+			"must": [{
+				"match": {
+					"entities.entity": {
+						"query": "umasrinivas",
+						"fuzziness": "auto"
+					}
+				}
+			}]
+		}
+	},
+	"size": 0,
+	"aggs": {
+		"group_by_entities": {
+			"terms": {
+				"field": "entities.entity.keyword",
+				"order": {
+					"max_score": "desc"
+				}
+			},
+			"aggs": {
+				"max_score": {
+					"max": {
+						"script": "_score"
+					}
+				},
+				"text_intent": {
+					"terms": {
+						"field": "text.keyword"
+					}
+				}
+			}
+		}
+	}
+}
