@@ -1,0 +1,22 @@
+GET /testindex/_search
+
+  {
+          query: {
+              bool: {
+                  must: [
+                    {match: {project: project}},
+                    {match: {model: model}},
+                    {
+                      match: 
+                      {
+                        text: {
+                        query:`${q}`,
+                        fuzziness: "AUTO"
+                        }
+                      }
+                    }
+                  ]
+                }             
+          },
+        size: 20
+      }
